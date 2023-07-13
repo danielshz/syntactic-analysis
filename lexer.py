@@ -1,26 +1,40 @@
-import sys
 import re
 
 # REGEX
 SPACE = r"\s+"
 VARIABLE = r"[a-zA-Z_][a-zA-Z_0-9]*"
-EXPRESSION = r"@[^\n]*"
-DECIMAL = r"[0-9]+"
-OPERADOR = r'%=|//|\*\*|\-=|/=|\*=|\+=|!=|>=|<=|==|<|>|\[|\{|\}|\(|\)|\,|\:|\.|\=|\+|\-|\*|%|/|\]'
+PRINT = r"@"
+NUM = r"[0-9]+"
+PARENTESES_L = r'\('
+PARENTESES_R = r'\)'
+EQUAL = r'\='
+SUM = r'\+'
+SUB = r'\-'
+MULT = r'\*'
+DIV = r'\/'
 COMMENT = r"#[^\n]*"
 NEWLINE = r"\n"
+#EOF = r"$"
 
 regex_list = [
   (COMMENT, 'COMMENT'), 
-  (VARIABLE, 'VARIABLE'), 
-  (DECIMAL, 'DECIMAL'), 
-  (OPERADOR, 'OPERADOR'),
-  (EXPRESSION, 'EXPRESSION'),
+  (VARIABLE, 'VARIABLE'),
+  (NUM, 'NUM'), 
+  (PARENTESES_L, 'PARENTESES_L'),
+  (PARENTESES_R, 'PARENTESES_R'),
+  (EQUAL, 'EQUAL'),
+  (SUM, 'SUM'),
+  (SUB, 'SUB'),
+  (MULT, 'MULT'),
+  (DIV, 'DIV'),
+  (PRINT, 'PRINT'),
   (NEWLINE, 'NEWLINE'),
   (SPACE, 'SPACE')
 ]
 
-def lexical_analysis(code_file, regex_list):
+keywords = {"sqrt", "sin", "cos", "tan"}
+
+def lexical_analysis(code_file, regex_list = regex_list, keywords = keywords):
   compile_list = []
   result = []
 
@@ -36,26 +50,20 @@ def lexical_analysis(code_file, regex_list):
 
       if not m == None:
         if not label == 'SPACE':
-            result.append((label, m.group()))
+          if label == 'VARIABLE' and m.group() in keywords:
+            label = 'FUNCTION'
+          result.append((label, m.group()))
         i = m.end()
         has_match = True
         break
     
     if not has_match:
-      print("ERROR")
+      print("ERROR: Unexpected character in input: %r" % code_file[i])
       break
-  print(result)
+  result.append(('EOF', 'EOF'))
+  return result
 
-try:
-  text = open(sys.argv[1], "r")
-  code_file = text.read()
-  print(code_file)
 
-  lexical_analysis(code_file, regex_list)
-except FileNotFoundError as e:
-  print(e)
-except Exception as e:
-  print(e)
 
 
 

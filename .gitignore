@@ -1,1 +1,5 @@
 .vscode/settings.json
+__pycache__/abstract_syntax_tree.cpython-311.pyc
+__pycache__/lexer.cpython-311.pyc
+__pycache__/test.cpython-311.pyc
+__pycache__/main.cpython-311.pyc

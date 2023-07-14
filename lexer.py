@@ -14,7 +14,7 @@ MULT = r'\*'
 DIV = r'\/'
 COMMENT = r"#[^\n]*"
 NEWLINE = r"\n"
-#EOF = r"$"
+# EOF = r"$"
 
 regex_list = [
 	(COMMENT, 'COMMENT'), 
@@ -42,6 +42,7 @@ def lexical_analysis(code_file, regex_list = regex_list, keywords = keywords):
 		compile_list.append((re.compile(regex), label))
 	
 	i = 0
+
 	while i < len(code_file):
 		has_match = False
 
@@ -52,7 +53,9 @@ def lexical_analysis(code_file, regex_list = regex_list, keywords = keywords):
 				if not label == 'SPACE' and not label == 'COMMENT':
 					if label == 'VARIABLE' and m.group() in keywords:
 						label = 'FUNCTION'
+
 					result.append((label, m.group()))
+
 				i = m.end()
 				has_match = True
 				break
@@ -60,10 +63,7 @@ def lexical_analysis(code_file, regex_list = regex_list, keywords = keywords):
 		if not has_match:
 			print("ERROR: Unexpected character in input: %r" % code_file[i])
 			break
+
 	result.append(('EOF', 'EOF'))
+
 	return result
-
-
-
-
-

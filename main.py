@@ -4,55 +4,61 @@ import fileinput
 from abstract_syntax_tree import *
 from test import *
 
-def lexer_token(code_file):
-    lista = lexer.lexical_analysis(code_file)
+def read_file_tokens(code_file):
+    lexer_tokens = lexer.lexical_analysis(code_file)
     
-    #Filtrar lista
-    tokens = []
-    result = []
-    i = 0
-    j = 0
-    for l in lista:
-        token = Token(l[1], l[0], i, j)
-        #print("coloquei o token: ", token.type, token.value, token.line, token.column)
-        tokens.append(token)
+    line_tokens = []
+    file_tokens = []
+
+    i, j = 0, 0
+
+    for label, value  in lexer_tokens:
+        token = Token(value, label, i, j)
+        line_tokens.append(token)
         j += 1
+
         if token.type == "NEWLINE":
-            result.append(tokens)
-            tokens = []
+            file_tokens.append(line_tokens)
+            line_tokens = []
             i += 1
             j = 0
-    result.append(tokens)
-    return result
+
+    file_tokens.append(line_tokens)
+
+    return file_tokens
 
 if __name__ == "__main__":
-    #Entrada pelo input padrão
-    if len(sys.argv) < 2:
-        result = []
-        for line in fileinput.input():
-            result.append(line)
-        result = lexer_token("".join(result))
+    tokens = []
 
-    #Rotina de teste
+    # Entrada pelo input padrão
+    if len(sys.argv) < 2:
+        for line in fileinput.input():
+            tokens.append(line)
+        tokens = read_file_tokens("".join(tokens))
+
+    # Rotina de teste
     elif sys.argv[1] ==  "-test":
         print("Iniciando rotina de teste...\n")
         test = Test()
+        
         test.control_test()
         test.lexer_test()
         test.evaluation_test()
+
         print("Testes concluídos com sucesso!")
         exit()
 
-    #Entrada por argumento
+    # Entrada por argumento
     else:
         try:
             text = open(sys.argv[1], "r")
             code_file = text.read()
-            result = lexer_token(code_file)
+            tokens = read_file_tokens(code_file)
         except Exception as e:
             print(e)
-   
-    for tokens in result:  # type: ignore
+
+   # type: ignore
+    for tokens in tokens:  
             parser = Parser(tokens).parseS()
             if tokens[0].type == "PRINT":
                 print(f'''\n{expression_to_string(parser)}\n=> {evaluate_expression(parser)}\n====================''')

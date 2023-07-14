@@ -35,11 +35,15 @@ Para executar o projeto você precisará ter instaladas as seguintes ferramentas
 ## 💾 Entrada <a name="input"></a>
 Todas as entradas devem respeitar o seguinte padrão:
 - Atribuições devem ser instanciadas como:
-  > x = exp
+   ```
+   x = exp
+   ``` 
 - Comandos de impressão devem ser instanciadas como:
-  > @exp
+   ```
+   @exp
+   ``` 
 
-- ❗**Atenção: Após os comandos, é obrigatório pular uma linha (principalmente no final do arquivo).**
+> **⚠️ Atenção: Após os comandos, é obrigatório pular uma linha (principalmente no final do arquivo).**
 ## 🚀 Execução <a name="exe"></a>
 Há várias formas de executar o programa, no diretório raiz do projeto:
 

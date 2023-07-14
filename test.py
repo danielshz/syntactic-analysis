@@ -49,6 +49,7 @@ class Test:
         assert(expression_to_string(optimize_expression(test_expression_4, variables_exp_4)) == "(sin(0) + (5 * 4))")
         assert(expression_to_string(optimize_expression(test_expression_5, variables_exp_5)) == "((((-(20 + 1)) + sqrt((((20 + 1) * (20 + 1)) - ((4 * 10) * 3)))) / (2 * 10)))")
         assert(expression_to_string(optimize_expression(test_expression_6, variables_exp_5)) == "((((-(20 + 1)) - sqrt((((20 + 1) * (20 + 1)) - ((4 * 10) * 3)))) / (2 * 10)))")
+
         print("Testes de controle concluídos com sucesso!")
 
     def lexer_test(self):
@@ -56,22 +57,20 @@ class Test:
         print("Lexer testado com sucesso!\n")
     
     def evaluation_test(self):
-        #Carrega os arquivos de teste na pasta tests
+        # Carrega os arquivos de teste na pasta tests
         for file in os.listdir(os.path.dirname(__file__) + "/tests"):
             if file.endswith(".txt"):
                 print(f"  Testando arquivo {file}...")
                 text = open(os.path.dirname(__file__) + "/tests/" + file, "r")
                 code_file = text.read()
-                result = main.lexer_token(code_file)
+                result = main.read_file_tokens(code_file)
                 
                 for tokens in result:
                     parser = main.Parser(tokens).parseS()
-                    #Não testar linhas vazias
+
+                    # Não testar linhas vazias
                     if parser == None or parser.type == "Empty":
                         continue
                     print(f'''{expression_to_string(parser)}\n=> {evaluate_expression(parser)}\n====================''')
         
         print("Testes de leitura e avaliação concluídos com sucesso!\n")
-    
-    
-    

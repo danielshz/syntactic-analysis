@@ -68,30 +68,45 @@ class Parser:
             self.next_token = self.tokens[self.index]
             return self.tokens[self.index - 1]
         else:
-            raise SyntaxError("Expected token of type " + type + " at line " + str(self.next_token.line) + " column " + str(self.next_token.column))
+            raise SyntaxError("Expected token of type " + type + " at line " + str(self.next_token.line) + " column " + str(self.next_token.column)+ " but got " + self.next_token.type + " instead.")
     
     def parseVS(self):
-        while self.peek("VARIABLE"):
-            v = self.consume("VARIABLE")
-            self.consume("EQUAL")
-            e = self.parseE()
-            return EAssignment(v.value, e)
-        else:
-            return EEmpty()
+        e = EEmpty()
+        while True:
+            if self.peek("EOF"):
+                return e
+            elif self.peek("VARIABLE"):
+                var = self.consume("VARIABLE")
+                self.consume("EQUAL")
+                exp = self.parseE()
+                e = EAssignment(var.value, exp)
+                if not self.peek("NEWLINE"):
+                    raise SyntaxError("Expected token of type NEWLINE at line " + str(self.next_token.line) + " column " + str(self.next_token.column) + " but got " + self.next_token.type + " instead.")
+            else:
+                break
+        return e
         
     def parsePS(self):
-        while self.peek("PRINT"):
-            self.consume("PRINT")
-            e = self.parseE()
-            return e
-        else:
-            return EEmpty()
+        e = EEmpty()
+        while True:
+            if self.peek("EOF"):
+                return e
+            elif self.peek("PRINT"):
+                self.consume("PRINT")
+                e = self.parseE()
+                if not self.peek("NEWLINE"):
+                    raise SyntaxError("Expected token of type NEWLINE at line " + str(self.next_token.line) + " column " + str(self.next_token.column) + " but got " + self.next_token.type + " instead.")
+            else:
+                break
+        return e
 
     def parseS(self):
         if self.peek("VARIABLE"):
             return self.parseVS()
         if self.peek("PRINT"):
             return self.parsePS()
+        if self.peek("NEWLINE") or self.peek("EOF"):
+            return EEmpty() 
         else:
             raise SyntaxError("Expected token of type VARIABLE or PRINT at line " + str(self.next_token.line) + " column " + str(self.next_token.column))
 
@@ -166,7 +181,7 @@ def evaluate_expression(expression, variables = variable):
                 case "/":
                     return evaluate_expression(expression.operand_left, variables) / evaluate_expression(expression.operand_right, variables)
                 case _:
-                    assert(False)
+                    raise Exception("Invalid operator, got " + expression.operator + " instead.")
 
         case "Number":
             return expression.value
@@ -177,7 +192,7 @@ def evaluate_expression(expression, variables = variable):
             elif expression.operator == "-":
                 return -evaluate_expression(expression.operand, variables)
             else:
-                assert(False)
+                raise Exception("Invalid unary, got " + expression.operator + " instead.")
 
         case "Variable":
             assert(expression.name in variables)
@@ -203,7 +218,7 @@ def evaluate_expression(expression, variables = variable):
                     return math.sqrt(evaluate_expression(expression.arguments[0], variables))
                 
                 case _:
-                    assert(False)
+                    raise Exception("Invalid function, got " + expression.name + " instead.")
 
         case "Empty":
             return 0
@@ -212,7 +227,7 @@ def evaluate_expression(expression, variables = variable):
             return evaluate_expression(expression.expression, variables) 
         
         case _:
-            assert(False)
+            raise Exception("Invalid expression type, got " + expression.type + " instead.")
 
 def expression_to_string(expression, variables = variable):
     match expression.type:
@@ -233,7 +248,7 @@ def expression_to_string(expression, variables = variable):
         case "Assignment":
             return expression.name + " = " + expression_to_string(expression.expression, variables)
         case _:
-            assert(False)
+            raise Exception("Invalid expression type, got " + expression.type + " instead.")
 
 def optimize_expression(expression, variables = variable):
     match expression.type:
@@ -272,6 +287,6 @@ def optimize_expression(expression, variables = variable):
             return EAssignment(expression.name, optimize_expression(expression.expression, variables))
 
         case _:
-            assert(False)
+            raise Exception("Invalid expression type, got " + expression.type + " instead.")
 
 

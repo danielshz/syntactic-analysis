@@ -1,6 +1,8 @@
-import test, lexer
+import lexer
 import sys 
+import fileinput
 from abstract_syntax_tree import *
+from test import *
 
 def lexer_token(code_file):
     lista = lexer.lexical_analysis(code_file)
@@ -19,28 +21,38 @@ def lexer_token(code_file):
             result.append(tokens)
             tokens = []
             i += 1
+            j = 0
     result.append(tokens)
     return result
 
 if __name__ == "__main__":
+    #Entrada pelo input padrão
     if len(sys.argv) < 2:
-        print("Argumentos inválidos")
-         
+        result = []
+        for line in fileinput.input():
+            result.append(line)
+        result = lexer_token("".join(result))
+
+    #Rotina de teste
     elif sys.argv[1] ==  "-test":
-        test.Test()
+        print("Iniciando rotina de teste...\n")
+        test = Test()
+        test.control_test()
+        test.lexer_test()
+        test.evaluation_test()
+        print("Testes concluídos com sucesso!")
+        exit()
+
+    #Entrada por argumento
     else:
         try:
             text = open(sys.argv[1], "r")
             code_file = text.read()
-            #print(code_file)
             result = lexer_token(code_file)
-
-            for tokens in result:
-                parser = Parser(tokens).parseS()
-                #print(parser)
-                print(f'''{expression_to_string(parser)}
-=> {evaluate_expression(parser)}
-==================== ''')
-            
         except Exception as e:
             print(e)
+   
+    for tokens in result:  # type: ignore
+            parser = Parser(tokens).parseS()
+            if tokens[0].type == "PRINT":
+                print(f'''\n{expression_to_string(parser)}\n=> {evaluate_expression(parser)}\n====================''')

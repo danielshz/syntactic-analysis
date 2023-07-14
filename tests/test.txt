@@ -1,6 +1,9 @@
+#Fórmula das Raízes de uma expressão quadrática
 a = 1
 b = 20
-c = 30
+c = 29
+c = 30 #Sobreescrevendo variáveis
 d = sqrt(b*b - 4*a*c)
-@ (-b + d)/(2*a)
-@ (-b - d)/(2*a)test
+
+@ (-b + d)/(2*a) 
+@ (-b - d)/(2*a) 

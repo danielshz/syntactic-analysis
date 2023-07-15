@@ -43,7 +43,7 @@ Todas as entradas devem respeitar o seguinte padrão:
    @exp
    ``` 
 
-> **⚠️ Atenção: Após os comandos, é obrigatório pular uma linha (principalmente no final do arquivo).**
+> **⚠️ Atenção: Após os comandos, é obrigatório pular uma linha (opcional no final do arquivo).**
 ## 🚀 Execução <a name="exe"></a>
 Há várias formas de executar o programa, no diretório raiz do projeto:
 

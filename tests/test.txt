@@ -6,4 +6,4 @@ c = 30 #Sobreescrevendo variáveis
 d = sqrt(b*b - 4*a*c)
 
 @ (-b + d)/(2*a) 
-@ (-b - d)/(2*a) 
+@ (-b - d)/(2*a)

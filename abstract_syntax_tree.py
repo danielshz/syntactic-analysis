@@ -85,6 +85,8 @@ class Parser:
                 e = EAssignment(var.value, exp)
 
                 if not self.peek("NEWLINE"):
+                    if self.peek("EOF"):
+                        return e
                     raise SyntaxError("Expected token of type NEWLINE at line " + str(self.next_token.line) + " column " + str(self.next_token.column) + " but got " + self.next_token.type + " instead.")
             else:
                 break
@@ -102,6 +104,8 @@ class Parser:
                 e = self.parseE()
 
                 if not self.peek("NEWLINE"):
+                    if self.peek("EOF"):
+                        return e
                     raise SyntaxError("Expected token of type NEWLINE at line " + str(self.next_token.line) + " column " + str(self.next_token.column) + " but got " + self.next_token.type + " instead.")
             else:
                 break

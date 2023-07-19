@@ -43,6 +43,7 @@ if __name__ == "__main__":
         
         test.control_test()
         test.lexer_test()
+        test.parser_test()
         test.evaluation_test()
 
         print("Testes concluídos com sucesso!")

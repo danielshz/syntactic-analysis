@@ -44,7 +44,6 @@ class EAssignment:
         self.name = name
         self.expression = expression
         self.type = "Assignment"
-        variable[name] = expression
 
 class Token:
     def __init__(self, value, type, line, column):
@@ -83,6 +82,7 @@ class Parser:
                 self.consume("EQUAL")
                 exp = self.parseE()
                 e = EAssignment(var.value, exp)
+                variable[var.value] = exp
 
                 if not self.peek("NEWLINE"):
                     if self.peek("EOF"):
@@ -133,10 +133,18 @@ class Parser:
                 
             elif self.peek("SUM"):
                 self.consume("SUM")
+                
+                if not self.peek("NUM") and not self.peek("VARIABLE") and not self.peek("PARENTESES_L") and not self.peek("FUNCTION"):
+                    raise SyntaxError("Expected token of type NUMBER, VARIABLE, PARENTESES_L or FUNCTION at line " + str(self.next_token.line) + " column " + str(self.next_token.column))
+                
                 e = EBinary(e, "+", self.parseT())
 
             elif self.peek("SUB"):
                 self.consume("SUB")
+                
+                if not self.peek("NUM") and not self.peek("VARIABLE") and not self.peek("PARENTESES_L") and not self.peek("FUNCTION"):
+                    raise SyntaxError("Expected token of type NUMBER, VARIABLE, PARENTESES_L or FUNCTION at line " + str(self.next_token.line) + " column " + str(self.next_token.column))
+                
                 e = EBinary(e, "-", self.parseT())
         
             else:
@@ -152,10 +160,18 @@ class Parser:
 
             elif self.peek("MULT"):
                 self.consume("MULT")
+                
+                if not self.peek("NUM") and not self.peek("VARIABLE") and not self.peek("PARENTESES_L") and not self.peek("FUNCTION"):
+                    raise SyntaxError("Expected token of type NUMBER, VARIABLE, PARENTESES_L or FUNCTION at line " + str(self.next_token.line) + " column " + str(self.next_token.column))
+                
                 e = EBinary(e, "*", self.parseF())
 
             elif self.peek("DIV"):
                 self.consume("DIV")
+                
+                if not self.peek("NUM") and not self.peek("VARIABLE") and not self.peek("PARENTESES_L") and not self.peek("FUNCTION"):
+                    raise SyntaxError("Expected token of type NUMBER, VARIABLE, PARENTESES_L or FUNCTION at line " + str(self.next_token.line) + " column " + str(self.next_token.column))
+                
                 e = EBinary(e, "/", self.parseF())
 
             else:
@@ -189,12 +205,11 @@ class Parser:
         elif self.peek("FUNCTION"):
             function = self.consume("FUNCTION").value
 
-            if self.peek("PARENTESES_L"):
-                self.consume("PARENTESES_L")
-                e = self.parseE()
-                self.consume("PARENTESES_R")
+            self.consume("PARENTESES_L")
+            e = self.parseE()
+            self.consume("PARENTESES_R")
 
-                return EFunction(function, [e])
+            return EFunction(function, [e])         
 
 def evaluate_expression(expression, variables = variable):
     match expression.type:

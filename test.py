@@ -56,6 +56,28 @@ class Test:
         assert(lexer.lexical_analysis("1 + 2 * 3") == [('NUM', '1'), ('SUM', '+'), ('NUM', '2'), ('MULT', '*'), ('NUM', '3'), ('EOF', 'EOF')])
         print("Lexer testado com sucesso!\n")
     
+    def parser_test(self):
+        try:
+            error_test_1 = main.read_file_tokens("@1 +* 2")
+            main.Parser(error_test_1[0]).parseS()
+        except Exception as e:
+            print(e)
+
+        try:
+            error_test_2 = main.read_file_tokens("@1 + 2 *")
+            main.Parser(error_test_2[0]).parseS()
+        except Exception as e:
+            print(e)
+        
+        try:
+            error_test_3 = main.read_file_tokens("@1 2 * 3")
+            main.Parser(error_test_3[0]).parseS()
+        except Exception as e:
+            print(e)
+
+        print("Parser testado com sucesso!\n")
+        return
+
     def evaluation_test(self):
         # Carrega os arquivos de teste na pasta tests
         for file in os.listdir(os.path.dirname(__file__) + "/tests"):
